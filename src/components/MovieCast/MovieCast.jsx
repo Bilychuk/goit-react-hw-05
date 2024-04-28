@@ -5,7 +5,7 @@ import Loader from '../Loader/Loader';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import CastList from '../CastList/CastList';
 
-export default function MovieReviews() {
+export default function MovieCast() {
   const { movieId } = useParams();
   const [cast, setCast] = useState([]);
   const [loading, setLoading] = useState(false);
