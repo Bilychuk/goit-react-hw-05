@@ -4,6 +4,7 @@ import { getReviews } from '../../movies-api';
 import Loader from '../Loader/Loader';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import ReviewsList from '../ReviewsList/ReviewsList';
+import css from './MovieReviews.module.css';
 
 export default function MovieReviews() {
   const { movieId } = useParams();
@@ -27,7 +28,7 @@ export default function MovieReviews() {
   }, [movieId]);
 
   return (
-    <div>
+    <div className={css.container}>
       {loading && <Loader />}
       {error && <ErrorMessage />}
       {reviews.length === 0 && <b>We do not have any reviews fo this movie</b>}
