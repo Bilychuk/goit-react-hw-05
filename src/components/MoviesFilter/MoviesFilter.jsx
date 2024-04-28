@@ -1,16 +1,29 @@
+import { useState } from 'react';
+import css from './MoviesFilter.module.css';
+
 export default function MoviesFilter({ value, onFilter }) {
+  const [query, setQuery] = useState(value);
+
   const handleSubmit = event => {
     event.preventDefault();
+    onFilter(query);
+    setQuery('');
   };
+
+  const handleChange = event => {
+    setQuery(event.target.value);
+  };
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
         <input
+          className={css.filter}
           type="text"
-          value={value}
-          onChange={e => onFilter(e.target.value)}
+          value={query}
+          onChange={handleChange}
         />
-        <button>Search</button>
+        <button type="submit">Search</button>
       </form>
     </div>
   );

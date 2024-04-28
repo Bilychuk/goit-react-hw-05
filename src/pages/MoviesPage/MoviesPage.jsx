@@ -1,8 +1,12 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { searchMovies } from '../../movies-api';
+import toast, { Toaster } from 'react-hot-toast';
 import MoviesFilter from '../../components/MoviesFilter/MoviesFilter';
 import MoviesList from '../../components/MovieList/MovieList';
+import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
+import Loader from '../../components/Loader/Loader';
+import css from './MoviesPage.module.css';
 
 export default function MoviesPage() {
   const [movies, setMovies] = useState([]);
@@ -10,19 +14,28 @@ export default function MoviesPage() {
   const [error, setError] = useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const queryParam = searchParams.get('query') ?? '';
+  const queryParam = (searchParams.get('query') ?? '').trim();
 
-  const changeQueryFilter = newFilter => {
+  const handleFilterChange = newFilter => {
     searchParams.set('query', newFilter);
     setSearchParams(searchParams);
   };
 
   useEffect(() => {
+    if (queryParam === '') {
+      return;
+    }
     async function fetchMovies() {
       try {
         setLoading(true);
         const data = await searchMovies(queryParam);
-        setMovies(data);
+        setMovies(data.results);
+        if (data.total_results === 0) {
+          toast.error('Sorry, we did not find movies by such query.', {
+            duration: 6000,
+            position: 'bottom-right',
+          });
+        }
       } catch (error) {
         setError(true);
       } finally {
@@ -39,11 +52,28 @@ export default function MoviesPage() {
   }, [queryParam, movies]);
 
   return (
-    <div>
-      <MoviesFilter value={queryParam} onFilter={changeQueryFilter} />
-      {error && <h2>Oops!There was an error! Please reload!</h2>}
-      {loading && <h2>Loading movies...</h2>}
+    <div className={css.wrapper}>
+      <MoviesFilter value={queryParam} onFilter={handleFilterChange} />
+      {error && <ErrorMessage />}
+      {loading && <Loader />}
       {movies.length > 0 && <MoviesList movies={filteredMovies} />}
+      <Toaster
+        toastOptions={{
+          style: {
+            color: 'white',
+          },
+          success: {
+            style: {
+              background: 'green',
+            },
+          },
+          error: {
+            style: {
+              background: 'red',
+            },
+          },
+        }}
+      />
     </div>
   );
 }

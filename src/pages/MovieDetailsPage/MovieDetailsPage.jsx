@@ -1,12 +1,19 @@
-import { useEffect, useState } from 'react';
-import { useParams, Link, Outlet } from 'react-router-dom';
+import { useEffect, useState, useRef, Suspense } from 'react';
+import { useParams, useLocation, Link, Outlet } from 'react-router-dom';
 import { getMovieById } from '../../movies-api';
+import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
+import Loader from '../../components/Loader/Loader';
+import MovieDetailsCard from '../../components/MovieDetailsCard/MovieDetailsCard';
+import css from './MovieDetailsPage.module.css';
 
 export default function MovieDetailsPage() {
   const { movieId } = useParams();
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+
+  const location = useLocation();
+  const backLinkURL = useRef(location.state ?? '/movies');
 
   useEffect(() => {
     async function fetchMovie() {
@@ -25,30 +32,28 @@ export default function MovieDetailsPage() {
 
   return (
     <div>
-      {loading && <h2>Loading...</h2>}
-      {error && <h2>Oops!There was an error! Please reload!</h2>}
-      <div>
-        <button>Go back</button>
-        <img src="" alt="" />
-        <h2>{movie.title}</h2>
-        <p>User score:%</p>
-        <h3>Overview</h3>
-        <p>{movie.overview}</p>
-        <h3>Genres</h3>
-        <p>{movie.genres.name}</p>
+      {loading && <Loader />}
+      {error && <ErrorMessage />}
+      <div className={css.homeBtn}>
+        <Link to={backLinkURL.current}>Go back</Link>
+      </div>
+      {movie && <MovieDetailsCard movie={movie} />}
+
+      <div className={css.addInfo}>
+        <p>Additional information</p>
+        <ul>
+          <li>
+            <Link to="cast">Cast</Link>
+          </li>
+          <li>
+            <Link to="reviews">Reviews</Link>
+          </li>
+        </ul>
       </div>
 
-      <p>Additional information</p>
-      <ul>
-        <li>
-          <Link to="cast">Cast</Link>
-        </li>
-        <li>
-          <Link to="reviews">Reviews</Link>
-        </li>
-      </ul>
-
-      <Outlet />
+      <Suspense fallback={<Loader />}>
+        <Outlet />
+      </Suspense>
     </div>
   );
 }

@@ -1,0 +1,10 @@
+.homeBtn {
+  padding: 16px 16px 0px 16px;
+}
+
+.addInfo {
+  padding: 16px;
+  padding-top: 20px;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.5);
+  margin-bottom: 16px;
+}

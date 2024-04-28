@@ -1,0 +1,15 @@
+.info {
+  padding: 16px;
+  display: flex;
+  gap: 20px;
+  justify-content: flex-start;
+  border-bottom: 1px solid gray;
+}
+
+.details {
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  justify-content: flex-start;
+}
